@@ -1,8 +1,7 @@
 DocFlow Agent — AI-Powered Documentation Automation System
-
 Author: Rajani Tangirala — Content Experience Lead, Salesforce
 Built: July 2026
-GitHub: github.com/rajanitangirala-tw/docflow-agent
+GitHub: github.com/YOUR-USERNAME/docflow-agent
 ---
 What This Project Is
 DocFlow Agent is a production-grade AI documentation automation system
@@ -138,3 +137,4 @@ docflow-agent/
     └── sample-api-doc-output.md       # Example Skill output
 ```
 ---
+
