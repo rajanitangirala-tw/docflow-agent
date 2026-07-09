@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocFlow Agent — AI Documentation Automation System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #24292e;
+      line-height: 1.7;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #1F4E79 0%, #2E75B6 60%, #4A90D9 100%);
+      color: white;
+      padding: 60px 40px 50px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.4em;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .hero p.subtitle {
+      font-size: 1.15em;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    .hero p.meta {
+      font-size: 0.95em;
+      opacity: 0.75;
+      margin-bottom: 30px;
+    }
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.88em;
+      font-weight: 500;
+    }
+
+    /* NAV */
+    nav {
+      background: #1F4E79;
+      padding: 0 40px;
+      display: flex;
+      gap: 0;
+      justify-content: center;
+    }
+    nav a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      padding: 14px 20px;
+      font-size: 0.92em;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    nav a:hover {
+      color: white;
+      border-bottom-color: #4A90D9;
+    }
+
+    /* MAIN LAYOUT */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* SUMMARY BANNER */
+    .summary-banner {
+      background: white;
+      border-left: 5px solid #2E75B6;
+      padding: 24px 28px;
+      margin: 40px 0 0;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .summary-banner p {
+      font-size: 1.05em;
+      color: #444;
+    }
+
+    /* SECTIONS */
+    section {
+      margin: 50px 0;
+    }
+    section h2 {
+      font-size: 1.5em;
+      color: #1F4E79;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e1e8f0;
+    }
+    section h3 {
+      font-size: 1.1em;
+      color: #2E75B6;
+      font-weight: 600;
+      margin: 28px 0 10px;
+    }
+    section p {
+      color: #444;
+      margin-bottom: 14px;
+    }
+
+    /* FOUR LAYERS CARDS */
+    .layers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .layer-card {
+      background: white;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      border-top: 4px solid #2E75B6;
+    }
+    .layer-card .layer-num {
+      font-size: 0.78em;
+      font-weight: 700;
+      color: #2E75B6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .layer-card h3 {
+      font-size: 1.2em;
+      color: #1F4E79;
+      margin: 0 0 10px;
+    }
+    .layer-card p {
+      font-size: 0.93em;
+      color: #555;
+      margin: 0;
+    }
+
+    /* TABLES */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin: 16px 0;
+    }
+    th {
+      background: #1F4E79;
+      color: white;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eef1f5;
+      font-size: 0.93em;
+      color: #444;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f5f8ff; }
+    td a {
+      color: #2E75B6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    td a:hover { text-decoration: underline; }
+    code {
+      background: #f0f4f8;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.88em;
+      color: #c7254e;
+    }
+
+    /* PIPELINE */
+    .pipeline {
+      background: #1a2942;
+      color: #c9d8e8;
+      border-radius: 10px;
+      padding: 28px 32px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.88em;
+      line-height: 1.9;
+      overflow-x: auto;
+    }
+    .pipeline .pl-title {
+      color: #4A90D9;
+      font-weight: 700;
+      font-size: 0.95em;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .pipeline .pl-arrow { color: #4A90D9; }
+    .pipeline .pl-done { color: #52c774; }
+    .pipeline .pl-sep { color: #444; margin: 12px 0; display: block; }
+
+    /* SAMPLE OUTPUT */
+    .output-box {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .output-box-header {
+      background: #1F4E79;
+      color: white;
+      padding: 12px 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .output-tab {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      padding: 3px 12px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+    .output-content {
+      padding: 20px 24px;
+    }
+    .output-content .label {
+      font-size: 0.78em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #2E75B6;
+      margin: 16px 0 6px;
+    }
+    .output-content .label:first-child { margin-top: 0; }
+    .output-content p {
+      font-size: 0.93em;
+      color: #444;
+      margin: 0;
+      background: #f8f9fa;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border-left: 3px solid #2E75B6;
+    }
+    .change-item {
+      background: #f0faf4;
+      border-left: 3px solid #52c774;
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 8px;
+      font-size: 0.92em;
+      color: #2d6a4f;
+    }
+
+    /* REPO STRUCTURE */
+    .repo-tree {
+      background: #1a2942;
+      color: #c9d8e8;
+      border-radius: 10px;
+      padding: 24px 28px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.88em;
+      line-height: 2;
+    }
+    .repo-tree .folder { color: #4A90D9; font-weight: 600; }
+    .repo-tree .file { color: #c9d8e8; }
+    .repo-tree .comment { color: #637a99; }
+
+    /* LEARNINGS */
+    .learnings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .learning-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .learning-card .lc-num {
+      font-size: 2em;
+      font-weight: 800;
+      color: #e8eef5;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .learning-card h4 {
+      font-size: 0.95em;
+      color: #1F4E79;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .learning-card p {
+      font-size: 0.88em;
+      color: #555;
+      margin: 0;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #1F4E79;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 32px 24px;
+      margin-top: 60px;
+      font-size: 0.9em;
+    }
+    footer a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 680px) {
+      .layers-grid, .learnings-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.7em; }
+      nav a { padding: 12px 12px; font-size: 0.85em; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>DocFlow Agent</h1>
+  <p class="subtitle">AI-Powered Documentation Automation System</p>
+  <p class="meta">Rajani Tangirala &nbsp;·&nbsp; Content Experience Lead, Salesforce &nbsp;·&nbsp; July 2026</p>
+  <div class="hero-badges">
+    <span class="badge">Claude Skills</span>
+    <span class="badge">MCP Servers</span>
+    <span class="badge">AI Agents</span>
+    <span class="badge">Doc-as-Code</span>
+    <span class="badge">Salesforce</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#skills">Skills</a>
+  <a href="#mcp">MCP Servers</a>
+  <a href="#agents">Agents</a>
+  <a href="#output">Sample Output</a>
+  <a href="#structure">Repository</a>
+</nav>
+
+<div class="container">
+
+  <!-- SUMMARY -->
+  <div class="summary-banner">
+    <p>DocFlow Agent is a production-grade AI documentation automation system I designed and built to demonstrate how <strong>Skills</strong>, <strong>MCP Servers</strong>, <strong>Plugins</strong>, and <strong>Agents</strong> work together in a real technical writing workflow. This is the actual system I use to manage documentation at Salesforce scale — adapted and documented here as a portfolio project.</p>
+  </div>
+
+  <!-- FOUR LAYERS -->
+  <section id="overview">
+    <h2>The Four Layers — How They Work Together</h2>
+    <p>Each layer plays a distinct role. Together they form a complete, autonomous documentation pipeline.</p>
+    <div class="layers-grid">
+      <div class="layer-card">
+        <div class="layer-num">Layer 1</div>
+        <h3>Skills</h3>
+        <p>Reusable Claude instruction playbooks. Written once, triggered by name. The output is always consistent, always on-brand, always following our standards. I built four Skills for this project.</p>
+      </div>
+      <div class="layer-card">
+        <div class="layer-num">Layer 2</div>
+        <h3>MCP Servers</h3>
+        <p>Live connections between Claude and my real tools — GitHub, Slack, Google Drive, and the local filesystem. No more copy-pasting. Claude reads and writes directly.</p>
+      </div>
+      <div class="layer-card">
+        <div class="layer-num">Layer 3</div>
+        <h3>Plugins</h3>
+        <p>Specialized capabilities added to Claude — web search to look up current API versions, and code execution to verify that examples actually work before including them in documentation.</p>
+      </div>
+      <div class="layer-card">
+        <div class="layer-num">Layer 4</div>
+        <h3>Agents</h3>
+        <p>Autonomous orchestrators. I give an agent a goal — it decides which Skills and MCP connections to use at each step and executes the full workflow without me guiding it manually.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <h2>Skills — Four Reusable Instruction Playbooks</h2>
+    <p>Each Skill file contains the complete instruction set, example input, and example output. These files encode years of editorial judgment into reusable AI workflows.</p>
+    <table>
+      <tr>
+        <th>Skill</th>
+        <th>What It Does</th>
+        <th>Time Saved</th>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/skills/release-note-generator.md">release-note-generator</a></td>
+        <td>Converts raw GUS engineering stories into customer-facing release notes — with correct classification, customer perspective, and action steps</td>
+        <td>45 min → 10 min</td>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/skills/api-endpoint-documenter.md">api-endpoint-documenter</a></td>
+        <td>Generates complete API reference pages from engineering specs — parameter tables, tested curl examples, response examples, and error codes</td>
+        <td>2 hrs → 20 min</td>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/skills/sme-notes-processor.md">sme-notes-processor</a></td>
+        <td>Transforms raw SME call notes into four outputs: documentation outline, follow-up questions, terminology list, and risk flags</td>
+        <td>60 min → 5 min</td>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/skills/doc-consistency-auditor.md">doc-consistency-auditor</a></td>
+        <td>Audits batches of articles against a style guide across five dimensions — produces a prioritized fix list: Critical, High, Medium, Low</td>
+        <td>2 weeks → 2 days</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- MCP -->
+  <section id="mcp">
+    <h2>MCP Servers — Live Connections to Real Tools</h2>
+    <p>MCP (Model Context Protocol) Server connections give Claude direct read and write access to my tools in real time. No copy-pasting. Claude works with the actual files, the actual repository, the actual Slack channel.</p>
+    <table>
+      <tr>
+        <th>MCP Server</th>
+        <th>Connected Tool</th>
+        <th>What Claude Can Do</th>
+      </tr>
+      <tr>
+        <td><strong>GitHub MCP</strong></td>
+        <td>GitHub repository</td>
+        <td>Read files, commit changes, open pull requests, read issues</td>
+      </tr>
+      <tr>
+        <td><strong>Filesystem MCP</strong></td>
+        <td>Local docs folder</td>
+        <td>Read and write local Markdown files directly</td>
+      </tr>
+      <tr>
+        <td><strong>Slack MCP</strong></td>
+        <td>Slack workspace</td>
+        <td>Post review notifications to documentation channels</td>
+      </tr>
+      <tr>
+        <td><strong>Google Drive MCP</strong></td>
+        <td>Google Drive</td>
+        <td>Read SME notes, design docs, and product requirement documents</td>
+      </tr>
+    </table>
+    <p>See the full configuration: <a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/mcp-config/mcp-servers.md">mcp-config/mcp-servers.md</a></p>
+  </section>
+
+  <!-- AGENTS -->
+  <section id="agents">
+    <h2>Agents — Two Autonomous Documentation Workflows</h2>
+    <p>Agents orchestrate Skills and MCP connections to run complete workflows autonomously. I define the goal and review the output. The agent handles everything in between.</p>
+    <table>
+      <tr>
+        <th>Agent</th>
+        <th>Trigger</th>
+        <th>What It Does Autonomously</th>
+        <th>My Job</th>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/agents/release-notes-pipeline-agent.md">Release Notes Pipeline</a></td>
+        <td>GUS story closed with doc-impact tag</td>
+        <td>Reads story → classifies → runs Skill → checks consistency → commits to GitHub → notifies Slack</td>
+        <td>Review PR in 10 minutes</td>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/agents/weekly-feedback-triage-agent.md">Weekly Feedback Triage</a></td>
+        <td>Every Monday 8 AM</td>
+        <td>Reads Drive feedback → categorizes → deduplicates → prioritizes top 5 → creates GitHub stories → fixes top issue → posts Slack summary</td>
+        <td>Review summary in 20 minutes</td>
+      </tr>
+    </table>
+
+    <h3>The Complete Pipeline</h3>
+    <div class="pipeline">
+      <span class="pl-title">MONDAY MORNING — WEEKLY FEEDBACK TRIAGE</span>
+Google Drive (MCP) <span class="pl-arrow">→</span> Reads last week's feedback doc
+  <span class="pl-arrow">→</span> doc-consistency-auditor SKILL runs
+  <span class="pl-arrow">→</span> Deduplicates + prioritizes top 5 issues
+  <span class="pl-arrow">→</span> GitHub MCP: creates 5 sprint stories
+  <span class="pl-arrow">→</span> Filesystem + GitHub MCP: fixes #1 issue
+  <span class="pl-arrow">→</span> Slack MCP: posts health summary
+  <span class="pl-arrow">→</span> Writer reviews in 20 minutes <span class="pl-done">✓</span>
+<span class="pl-sep">────────────────────────────────────</span>
+<span class="pl-title">CONTINUOUS — RELEASE NOTES PIPELINE</span>
+GitHub (MCP) <span class="pl-arrow">→</span> Detects closed GUS story (doc-impact tag)
+  <span class="pl-arrow">→</span> release-note-generator SKILL runs
+  <span class="pl-arrow">→</span> Consistency check via Filesystem MCP
+  <span class="pl-arrow">→</span> GitHub MCP: commits to release notes file
+  <span class="pl-arrow">→</span> Slack MCP: posts review notification
+  <span class="pl-arrow">→</span> Writer approves PR in 10 minutes <span class="pl-done">✓</span>
+    </div>
+  </section>
+
+  <!-- SAMPLE OUTPUT -->
+  <section id="output">
+    <h2>Sample Output — The Human-AI Collaboration in Action</h2>
+    <p>The most important file in this project is the <a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/outputs/sample-release-note-output.md">sample output</a>. It shows exactly what the agent produces and what I change as the writer — and why.</p>
+
+    <div class="output-box">
+      <div class="output-box-header">
+        <span>Sample Run: "Add bulk export to CSV for workflow run history"</span>
+        <span class="output-tab">New Feature</span>
+      </div>
+      <div class="output-content">
+        <div class="label">Agent completed in</div>
+        <p>8 seconds — read story, classify, generate draft, check consistency, commit to GitHub, post Slack notification</p>
+
+        <div class="label">Agent Draft (before writer review)</div>
+        <p><strong>Workflow Run History — Export to CSV</strong><br>
+        What changed: You can now export your workflow run history as a CSV file directly from the Run History page...<br>
+        Who this affects: All users who manage and monitor workflow execution history.<br>
+        What you need to do: No action required. Click Export to CSV on the Run History page.</p>
+
+        <div class="label">Writer's Editorial Changes (3 specific improvements)</div>
+        <div class="change-item">✏️ <strong>Added note about existing sessions</strong> — Engineering notes mentioned existing sessions are not affected until they expire. The agent missed this. Critical for admins who expect immediate effect.</div>
+        <div class="change-item">✏️ <strong>Corrected the plan requirement</strong> — Agent wrote "Enterprise plans" based on CLAUDE.md defaults. Checked the release spec — actually available to Professional and above. Corrected.</div>
+        <div class="change-item">✏️ <strong>Made the value range explicit</strong> — Agent mentioned "1 hour to 30 days" but did not give the exact numbers admins need. Added: 1 hour (minimum) to 720 hours / 30 days (maximum).</div>
+
+        <div class="label">Result</div>
+        <p>Final release note published. Total writer time: 10 minutes. Without the agent: 45 minutes from scratch. <strong>AI did the mechanical work. Writer provided the judgment.</strong></p>
+      </div>
+    </div>
+
+    <p style="margin-top:16px;">View the full example: <a href="https://github.com/rajanitangirala-tw/docflow-agent/blob/main/outputs/sample-release-note-output.md">outputs/sample-release-note-output.md</a></p>
+  </section>
+
+  <!-- REPOSITORY STRUCTURE -->
+  <section id="structure">
+    <h2>Repository Structure</h2>
+    <div class="repo-tree">
+<span class="folder">docflow-agent/</span>
+├── <span class="file">CLAUDE.md</span>         <span class="comment">← AI briefing file — project standards and terminology</span>
+├── <span class="file">README.md</span>         <span class="comment">← Project documentation</span>
+│
+├── <span class="folder">skills/</span>
+│   ├── <span class="file">release-note-generator.md</span>     <span class="comment">← Skill: GUS stories → release notes</span>
+│   ├── <span class="file">api-endpoint-documenter.md</span>    <span class="comment">← Skill: API specs → reference pages</span>
+│   ├── <span class="file">sme-notes-processor.md</span>        <span class="comment">← Skill: Call notes → doc outlines</span>
+│   └── <span class="file">doc-consistency-auditor.md</span>    <span class="comment">← Skill: Batch doc quality audit</span>
+│
+├── <span class="folder">mcp-config/</span>
+│   └── <span class="file">mcp-servers.md</span>    <span class="comment">← Four MCP server configurations</span>
+│
+├── <span class="folder">agents/</span>
+│   ├── <span class="file">release-notes-pipeline-agent.md</span>    <span class="comment">← Agent: End-to-end release notes</span>
+│   └── <span class="file">weekly-feedback-triage-agent.md</span>    <span class="comment">← Agent: Monday feedback processing</span>
+│
+├── <span class="folder">examples/</span>
+│   └── <span class="file">sample-gus-story-input.md</span>    <span class="comment">← Sample input for release notes agent</span>
+│
+└── <span class="folder">outputs/</span>
+    └── <span class="file">sample-release-note-output.md</span>    <span class="comment">← Agent output + editorial review</span>
+    </div>
+
+    <h3>What I Learned Building This</h3>
+    <div class="learnings-grid">
+      <div class="learning-card">
+        <div class="lc-num">01</div>
+        <h4>Skills are the highest-leverage investment</h4>
+        <p>Writing a good Skill takes 2–3 hours. But it pays back immediately — every task that uses it is faster, more consistent, and requires less review.</p>
+      </div>
+      <div class="learning-card">
+        <div class="lc-num">02</div>
+        <h4>MCP removes the biggest friction</h4>
+        <p>Before MCP, significant time was spent copying content into Claude and out again. MCP eliminated that entirely — Claude reads and writes the real files.</p>
+      </div>
+      <div class="learning-card">
+        <div class="lc-num">03</div>
+        <h4>Quality gates are more important than capabilities</h4>
+        <p>The most important design decision in each agent was what it could not do without human approval. Every agent ends with a human review step.</p>
+      </div>
+      <div class="learning-card">
+        <div class="lc-num">04</div>
+        <h4>This is systems architecture, not writing</h4>
+        <p>Building this shifted my thinking. I am not a writer who uses AI tools. I am a documentation systems architect who designs pipelines that produce documentation.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>DocFlow Agent</strong> &nbsp;·&nbsp; Designed and built by <strong>Rajani Tangirala</strong> &nbsp;·&nbsp; Content Experience Lead, Salesforce</p>
+  <p style="margin-top:10px;">
+    <a href="https://github.com/rajanitangirala-tw/docflow-agent">GitHub Repository</a>
+    &nbsp;·&nbsp;
+    <a href="https://rajanitangirala-tw.github.io/flowdocs">FlowDocs Portfolio</a>
+    &nbsp;·&nbsp;
+    <a href="https://linkedin.com/in/rajani-tangirala-csm">LinkedIn</a>
+  </p>
+  <p style="margin-top:10px; font-size:0.85em; opacity:0.6;">Portfolio demonstration of AI-powered documentation architecture. Skills, Agents, and MCP configurations based on real enterprise workflows.</p>
+</footer>
+
+</body>
+</html>
